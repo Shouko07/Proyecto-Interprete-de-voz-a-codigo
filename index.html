@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compilador Python</title>
+    <title>
+        Compilador Python</title>
 
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,600,700&display=swap">
@@ -20,21 +21,24 @@
 <header class="bg-primary-gradient">
     <nav class="navbar navbar-expand-md sticky-top navbar-shrink py-3" id="mainNav">
         <div class="container">
+            <img id="themeImage" src="assets/img/Negro.png" alt="Tema actual" width="50">
             <a class="navbar-brand" href="#">Compilador Python</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" onclick="main()">Ejecutar</a></li>
-                    <input type="file" />
+                    <li class="nav-item">
+                        <label for="fileInput" class="visually-hidden">Subir archivo</label>
+                        <input type="file" id="fileInput" title="Upload File" />
+                    </li>
                     <li class="nav-item"><a class="nav-link" onclick="document.querySelector('input').click()">Abrir</a></li>
                     <li class="nav-item"><a class="nav-link" onclick="toggleConsole()">Consola</a></li>
                     <li class="nav-item"><a class="nav-link" onclick="saveCode()">Guardar</a></li>
                     <li class="nav-item"><a class="nav-link" onclick="downloadCode()">Descargar</a></li>
                     <li class="nav-item"><a class="nav-link" onclick="Color()">🌙</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="Voz()">Hola</a></li>
-
+                    <li class="nav-item"><a class="nav-link" onclick="startVoiceRecognition()">Hola</a></li>
                 </ul>
             </div>
         </div>

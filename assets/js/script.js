@@ -106,6 +106,15 @@ function Color() {
         button.classList.toggle("btn-dark");
         button.textContent = newTheme === "dark" ? "☀️" : "🌙";
     }
+    const div = document.getElementById("output");
+    if (div) {
+        div.style.backgroundColor = newTheme === "dark" ? "#1C1C1C" : "#f9f9f9";
+    }
+    editor.setTheme(newTheme === "dark" ? "ace/theme/merbivore_soft" : "ace/theme/dawn");
+    const img = document.getElementById("themeImage");
+    if (img) {
+    img.src = newTheme === "dark" ? "assets/img/Blanco.png" : "assets/img/Negro.png";
+    }
 }
 function startVoiceRecognition() {
     if ('webkitSpeechRecognition' in window) {
