@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "whisper-speech-to-text": "^1.0.3"
+  }
+}

@@ -9,7 +9,8 @@ function builtinRead(x) {
     return Sk.builtinFiles["files"][x];
 }
 
-//Codigo proporcionado por skulpt pero modificado para el uso de Python 3, el uso de ace-builds y que se imprima el tiempo de ejecucion.
+//Codigo proporcionado por skulpt pero modificado para el uso de Python 3,
+// el uso de ace-builds y que se imprima el tiempo de ejecucion.
 function run() {
     var t0 = (new Date()).getTime()
     var prog = editor.getValue();
@@ -39,7 +40,6 @@ function run() {
         });
 };
 
-//Codigo por autor
 function main() {
     run();
     var mypre = document.getElementById("output");
@@ -116,12 +116,14 @@ function Color() {
     img.src = newTheme === "dark" ? "assets/img/Blanco.png" : "assets/img/Negro.png";
     }
 }
+let recognition;
+
 function startVoiceRecognition() {
     if ('webkitSpeechRecognition' in window) {
         recognition = new webkitSpeechRecognition();
-        recognition.lang = 'es-ES';  // Establecer idioma a español
-        recognition.interimResults = true;  // Mostrar resultados parciales
-        recognition.maxAlternatives = 1;  // Sólo una alternativa de texto
+        recognition.lang = 'es-ES';
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
 
         recognition.onstart = function () {
             console.log("Micrófono activado...");
@@ -130,14 +132,16 @@ function startVoiceRecognition() {
         recognition.onresult = function (event) {
             const transcript = event.results[0][0].transcript;
             const editor = ace.edit("editor");
-            editor.insert('Texto: ' + transcript + '\n'); // Insertar el texto en el editor
+            editor.insert(transcript + ' '); 
         };
 
         recognition.onerror = function (event) {
             console.error("Error: ", event.error);
         };
 
-        recognition.start(); // Iniciar reconocimiento
+        recognition.onend = function () {
+            console.log("Micrófono desactivado...");
+        };
     } else {
         alert('La Web Speech API no está soportada en este navegador.');
     }
@@ -145,11 +149,9 @@ function startVoiceRecognition() {
 
 function stopVoiceRecognition() {
     if (recognition) {
-        recognition.stop(); // Detener el reconocimiento de voz
-        console.log("Micrófono desactivado...");
+        recognition.stop();
     }
 }
-//Codigo autor
 function kbShortcuts() {
     window.alert("Run : Ctrl+Enter\nOpen : Ctrl+Shift+O\nConsole : Ctrl+Shift+E\nSave : Ctrl+Shift+S\nDownload : Ctrl+Shift+D\nShare : Ctrl+Shift+A\nKeyboard : Ctrl+Shift+K\nSettings : Ctrl+,")
 }
@@ -166,10 +168,12 @@ function resPanel() {
         x.className = "topnav";
     }
 }
-
+startVoiceRecognition();
 document.addEventListener('keydown', (event) => {
     if (event.shiftKey && event.key == "O") {
-        startVoiceRecognition();
+        if (recognition && recognition.state !== "recording") {
+            recognition.start();
+        }
     }
     if (event.ctrlKey && event.key == "Enter") {
         event.preventDefault();
@@ -177,7 +181,6 @@ document.addEventListener('keydown', (event) => {
     }
 
     if (event.ctrlKey && event.shiftKey && event.key == "O") {
-        startVoiceRecognition();
     }
 
     if (event.ctrlKey && event.shiftKey && event.key == "E") {
@@ -207,7 +210,6 @@ document.addEventListener('keydown', (event) => {
 
 });
 document.addEventListener('keyup', (event) => {
-    // Desactivar la detección de voz cuando Shift + O sea liberado
     if (event.shiftKey && event.key == "O") {
         stopVoiceRecognition();
     }
