@@ -116,12 +116,13 @@ function Color() {
     img.src = newTheme === "dark" ? "assets/img/Blanco.png" : "assets/img/Negro.png";
     }
 }
+//Literal
 let recognition;
 
 function startVoiceRecognition() {
     if ('webkitSpeechRecognition' in window) {
         recognition = new webkitSpeechRecognition();
-        recognition.lang = 'es-ES';
+        recognition.lang = 'es-MX';
         recognition.interimResults = true;
         recognition.maxAlternatives = 1;
 
@@ -130,11 +131,15 @@ function startVoiceRecognition() {
         };
 
         recognition.onresult = function (event) {
-            const transcript = event.results[0][0].transcript;
-            const editor = ace.edit("editor");
-            editor.insert(transcript + ' '); 
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {  // Solo tomar los resultados finales
+                    const transcript = event.results[i][0].transcript;
+                    const editor = ace.edit("editor");
+                    editor.insert(transcript + ' '); 
+                }
+            }
         };
-
+        
         recognition.onerror = function (event) {
             console.error("Error: ", event.error);
         };
@@ -152,6 +157,60 @@ function stopVoiceRecognition() {
         recognition.stop();
     }
 }
+//Literal
+//Interprete
+let codeRecognition;
+
+function startCodeVoiceRecognition() {
+    if ('webkitSpeechRecognition' in window) {
+        codeRecognition = new webkitSpeechRecognition();
+        codeRecognition.lang = 'es-MX';
+        codeRecognition.interimResults = false; // Solo resultado final
+        codeRecognition.maxAlternatives = 1;
+
+        codeRecognition.onstart = function () {
+            console.log("Modo código activado...");
+        };
+
+        codeRecognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            console.log("Escuchado: ", transcript);
+            const editor = ace.edit("editor");
+
+            // Aquí las palabras clave y sus códigos
+            if (transcript.includes("imprime")) {
+                editor.insert('print("Hola Mundo")\n');
+            } else if (transcript.includes("ciclo for")) {
+                editor.insert('for i in range(5):\n    print(i)\n');
+            } else if (transcript.includes("condicional if")) {
+                editor.insert('if condicion:\n    print("Condición verdadera")\n');
+            } else if (transcript.includes("función")) {
+                editor.insert('def mi_funcion():\n    print("Hola desde la función")\n');
+            } else {
+                editor.insert('# Comando no reconocido: ' + transcript + '\n');
+            }
+        };
+
+        codeRecognition.onerror = function (event) {
+            console.error("Error: ", event.error);
+        };
+
+        codeRecognition.onend = function () {
+            console.log("Modo código desactivado...");
+        };
+
+        codeRecognition.start();
+    } else {
+        alert('La Web Speech API no está soportada en este navegador.');
+    }
+}
+
+function stopCodeVoiceRecognition() {
+    if (codeRecognition) {
+        codeRecognition.stop();
+    }
+}
+//Interprete
 function kbShortcuts() {
     window.alert("Run : Ctrl+Enter\nOpen : Ctrl+Shift+O\nConsole : Ctrl+Shift+E\nSave : Ctrl+Shift+S\nDownload : Ctrl+Shift+D\nShare : Ctrl+Shift+A\nKeyboard : Ctrl+Shift+K\nSettings : Ctrl+,")
 }
@@ -169,10 +228,16 @@ function resPanel() {
     }
 }
 startVoiceRecognition();
+startCodeVoiceRecognition();
 document.addEventListener('keydown', (event) => {
     if (event.shiftKey && event.key == "O") {
         if (recognition && recognition.state !== "recording") {
             recognition.start();
+        }
+    }
+    if (event.shiftKey && event.key == "U") {
+        if (codeRecognition && codeRecognition.state !== "recording") {
+            codeRecognition.start();
         }
     }
     if (event.ctrlKey && event.key == "Enter") {
@@ -213,6 +278,9 @@ document.addEventListener('keyup', (event) => {
     if (event.shiftKey && event.key == "O") {
         stopVoiceRecognition();
     }
+    if (event.shiftKey && event.key == "U") {
+        stopCodeVoiceRecognition();
+    }
 });
 var editor = ace.edit("editor");
 editor.setTheme("ace/theme/merbivore_soft");
@@ -224,7 +292,7 @@ editor.commands.removeCommand('replaymacro');
 ace.require("ace/ext/language_tools");
 editor.setOptions({
     fontFamily: "Source Code Pro",
-    fontSize: "15px",
+    fontSize: "18px",
     enableBasicAutocompletion: true,
     enableSnippets: true,
     enableLiveAutocompletion: true,

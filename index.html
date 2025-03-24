@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         Compilador Python</title>
-
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,600,700&display=swap">
 
     <script src="assets/js/ace-builds/src-noconflict/ace.js" type="text/javascript"></script>
@@ -14,7 +14,6 @@
     <script src="assets/js/skulpt/skulpt.js" type="text/javascript"></script>
     <script src="assets/js/skulpt/skulpt-stdlib.js" type="text/javascript"></script>
 
-    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 <header class="bg-primary-gradient">
@@ -27,17 +26,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" onclick="main()">Ejecutar</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-link" onclick="main()">Ejecutar</a></li>
                     <li class="nav-item">
                         <label for="fileInput" class="visually-hidden">Subir archivo</label>
                         <input type="file" id="fileInput" title="Upload File" />
                     </li>
-                    <li class="nav-item"><a class="nav-link" onclick="document.querySelector('input').click()">Abrir</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="toggleConsole()">Consola</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="saveCode()">Guardar</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="downloadCode()">Descargar</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="Color()">🌙</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="startVoiceRecognition()">Hola</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-link" onclick="document.querySelector('input').click()">Abrir</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-link" onclick="toggleConsole()">Consola</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-link" onclick="saveCode()">Guardar</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-link" onclick="downloadCode()">Descargar</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-link" onclick="Color()">🌙</a></li>
                 </ul>
             </div>
         </div>
@@ -45,7 +43,7 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-8">
-                <div id="editor" class="border rounded p-3" style="height: 700px;"><pre>
+                <div id="editor" class="border rounded p-3" style="height: 700px;"><pre >
 print("Hola mundo!")</pre>
                 </div>
             </div>
