@@ -110,7 +110,7 @@ function Color() {
     if (div) {
         div.style.backgroundColor = newTheme === "dark" ? "#1C1C1C" : "#f9f9f9";
     }
-    editor.setTheme(newTheme === "dark" ? "ace/theme/merbivore_soft" : "ace/theme/dawn");
+    editor.setTheme(newTheme === "dark" ? "ace/theme/merbivore_soft" : "ace/theme/textmate");
     const img = document.getElementById("themeImage");
     if (img) {
     img.src = newTheme === "dark" ? "assets/img/Blanco.png" : "assets/img/Negro.png";
