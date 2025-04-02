@@ -78,7 +78,8 @@
   --bs-body-line-height: 1.6;
   --bs-body-color: #2d2d2d;
   --bs-body-color-rgb: 45, 45, 45;
-  --bs-body-bg: #fff;
+  /*Navbar*/
+  --bs-body-bg: #EDEEEF;
   --bs-body-bg-rgb: 255, 255, 255;
   --bs-emphasis-color: #000;
   --bs-emphasis-color-rgb: 0, 0, 0;
@@ -127,7 +128,8 @@
   color-scheme: dark;
   --bs-body-color: #fff;
   --bs-body-color-rgb: 255, 255, 255;
-  --bs-body-bg: #2d2c38;
+  /*Navbar*/
+  --bs-body-bg: #1F1E24;
   --bs-body-bg-rgb: 45, 44, 56;
   --bs-emphasis-color: #fff;
   --bs-emphasis-color-rgb: 255, 255, 255;
@@ -4563,7 +4565,7 @@ textarea.form-control-lg {
 .nav-link {
   display: block;
   padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
-  font-size: var(--bs-nav-link-font-size);
+  font-size: 18px;
   font-weight: var(--bs-nav-link-font-weight);
   color: var(--bs-nav-link-color);
   text-decoration: none;
