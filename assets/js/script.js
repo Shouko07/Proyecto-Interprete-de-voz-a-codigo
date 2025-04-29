@@ -62,17 +62,6 @@ function openFile() {
     reader.readAsText(file);
 };
 
-function toggleConsole() {
-    var mypre = document.getElementById("output");
-    if (mypre.style.display !== 'none') {
-        mypre.style.display = 'none';
-    }
-    else {
-        mypre.style.display = 'block';
-    }
-    editor.resize()
-}
-
 function saveCode() {
     localStorage['saveKey'] = editor.getValue();
     window.alert("¡Codigo guardado!")
@@ -128,165 +117,201 @@ function Color() {
     }
 }
 //Literal
-let recognition;
+// Variables de control
+let recognition = null;
+let isListening = false;
+let keysPressed = {};
 
-function startVoiceRecognition() {
-    if ('webkitSpeechRecognition' in window) {
-        recognition = new webkitSpeechRecognition();
-        recognition.lang = 'es-MX';
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
+// Elemento visual
+const micStatus = document.getElementById("mic-status");
 
-        recognition.onstart = function () {
-            console.log("Micrófono activado...");
-        };
+function initializeRecognition() {
+  if (!('webkitSpeechRecognition' in window)) {
+    alert('Tu navegador no soporta reconocimiento de voz.');
+    return null;
+  }
 
-        recognition.onresult = function (event) {
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {  // Solo tomar los resultados finales
-                    const transcript = event.results[i][0].transcript;
-                    const editor = ace.edit("editor");
-                    editor.insert(transcript + ' '); 
-                }
-            }
-        };
-        
-        recognition.onerror = function (event) {
-            console.error("Error: ", event.error);
-        };
+  const recog = new webkitSpeechRecognition();
+  recog.lang = 'es-MX';
+  recog.interimResults = true;
+  recog.maxAlternatives = 1;
 
-        recognition.onend = function () {
-            console.log("Micrófono desactivado...");
-        };
-    } else {
-        alert('La Web Speech API no está soportada en este navegador.');
+  recog.onstart = () => {
+    isListening = true;
+    micStatus.style.display = 'block';
+    console.log("🎤 Reconocimiento iniciado...");
+  };
+
+  recog.onresult = (event) => {
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        const transcript = event.results[i][0].transcript;
+        editor.insert(transcript + ' ');
+      }
     }
+  };
+
+  recog.onerror = (event) => {
+    console.error("❌ Error: ", event.error);
+  };
+
+  recog.onend = () => {
+    isListening = false;
+    micStatus.style.display = 'none';
+    console.log("🎤 Reconocimiento detenido.");
+  };
+
+  return recog;
 }
 
-function stopVoiceRecognition() {
-    if (recognition) {
-        recognition.stop();
-    }
+function startRecognition() {
+  if (!isListening) {
+    recognition = initializeRecognition();
+    if (recognition) recognition.start();
+  }
+}
+
+function stopRecognition() {
+  if (recognition && isListening) {
+    recognition.stop();
+  }
 }
 //Interprete
-let codeRecognition;
+let codeRecognition = null;
+let isCodeListening = false;
+let codeKeysPressed = {};
 
-function startCodeVoiceRecognition() {
-    if ('webkitSpeechRecognition' in window) {
-        codeRecognition = new webkitSpeechRecognition();
-        codeRecognition.lang = 'es-MX';
-        codeRecognition.interimResults = false; // Solo resultado final
-        codeRecognition.maxAlternatives = 1;
+const codeStatus = document.getElementById("code-status");
 
-        codeRecognition.onstart = function () {
-            console.log("Modo código activado...");
-        };
+function initializeCodeRecognition() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert('Tu navegador no soporta reconocimiento de voz.');
+        return null;
+    }
 
-        codeRecognition.onresult = function (event) {
-            const transcript = event.results[0][0].transcript.toLowerCase();
-            console.log("Escuchado: ", transcript);
-            const editor = ace.edit("editor");
+    const recog = new webkitSpeechRecognition();
+    recog.lang = 'es-MX';
+    recog.interimResults = false;
+    recog.maxAlternatives = 1;
 
-            // Comandos de Python
-            if (transcript.includes("imprime")) {
-                editor.insert('print("Hola Mundo")\n');
-            } else if (transcript.includes("ciclo for")) {
-                editor.insert('for i in range(5):\n    print(i)\n');
-            } else if (transcript.includes("ciclo while")) {
-                editor.insert('while condicion:\n    print("Dentro del while")\n');
-            } else if (transcript.includes("condicional if")) {
-                editor.insert('if condicion:\n    print("Condición verdadera")\n');
-            } else if (transcript.includes("condicional if else")) {
-                editor.insert('if condicion:\n    print("Verdadero")\nelse:\n    print("Falso")\n');
-            } else if (transcript.includes("función")) {
-                editor.insert('def mi_funcion():\n    print("Función")\n');
-            } else if (transcript.includes("lista")) {
-                editor.insert('mi_lista = [1, 2, 3, 4, 5]\n');
-            } else if (transcript.includes("tupla")) {
-                editor.insert('mi_tupla = (1, 2, 3, 4, 5)\n');
-            } else if (transcript.includes("clase")) {
-                editor.insert('class MiClase:\n    def __init__(self, atributo):\n        self.atributo = atributo\n');
-            } else if (transcript.includes("objeto")) {
-                editor.insert('objeto = MiClase("Valor")\n');
-            } else if (transcript.includes("importa")) {
-                editor.insert('import numpy as np\n');
-            } else if (transcript.includes("entrada")) {
-                editor.insert('nombre = input("Ingrese su nombre: ")\n');
-            } else if (transcript.includes("suma")) {
-                editor.insert('resultado = 5 + 3\n');
-            } else if (transcript.includes("resta")) {
-                editor.insert('resultado = 10 - 4\n');
-            } else if (transcript.includes("multiplicación")) {
-                editor.insert('resultado = 6 * 7\n');
-            } else if (transcript.includes("división")) {
-                editor.insert('resultado = 8 / 2\n');
-            } else if (transcript.includes("división entera")) {
-                editor.insert('resultado = 9 // 2\n');
-            } else if (transcript.includes("módulo")) {
-                editor.insert('resultado = 10 % 3\n');
-            } else if (transcript.includes("potencia")) {
-                editor.insert('resultado = 2 ** 3\n');
-            } else if (transcript.includes("convertir a entero")) {
-                editor.insert('numero = int("42")\n');
-            } else if (transcript.includes("convertir a flotante")) {
-                editor.insert('numero = float("3.14")\n');
-            } else if (transcript.includes("convertir a cadena")) {
-                editor.insert('texto = str(100)\n');
-            } else if (transcript.includes("ejecutar")) {
-                main();
-            } else if (transcript.includes("abrir")) {
-                document.querySelector('input').click();
-            } else if (transcript.includes("guardar")) {
-                saveCode();
-            } else if (transcript.includes("descarga")) {
-                downloadCode();
-            } else if (transcript.includes("tema")) {
-                Color();
+    recog.onstart = () => {
+        isCodeListening = true;
+        codeStatus.style.display = 'block';
+        console.log("🧠 Modo código activado...");
+    };
+
+    recog.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        const editor = ace.edit("editor");
+        console.log("Comando reconocido: ", transcript);
+
+        // Instrucciones por voz mapeadas a código
+        const comandos = [
+            { palabras: ["imprime"], codigo: 'print("Hola Mundo")\n' },
+            { palabras: ["ciclo for"], codigo: 'for i in range(5):\n    print(i)\n' },
+            { palabras: ["ciclo while"], codigo: 'while condicion:\n    print("Dentro del while")\n' },
+            { palabras: ["condicional if else"], codigo: 'if condicion:\n    print("Verdadero")\nelse:\n    print("Falso")\n' },
+            { palabras: ["condicional if"], codigo: 'if condicion:\n    print("Condición verdadera")\n' },
+            { palabras: ["función"], codigo: 'def mi_funcion():\n    print("Función")\n' },
+            { palabras: ["lista"], codigo: 'mi_lista = [1, 2, 3, 4, 5]\n' },
+            { palabras: ["tupla"], codigo: 'mi_tupla = (1, 2, 3, 4, 5)\n' },
+            { palabras: ["clase"], codigo: 'class MiClase:\n    def __init__(self, atributo):\n        self.atributo = atributo\n' },
+            { palabras: ["objeto"], codigo: 'objeto = MiClase("Valor")\n' },
+            { palabras: ["importa"], codigo: 'import numpy as np\n' },
+            { palabras: ["entrada"], codigo: 'nombre = input("Ingrese su nombre: ")\n' },
+            { palabras: ["suma"], codigo: 'resultado = 5 + 3\n' },
+            { palabras: ["resta"], codigo: 'resultado = 10 - 4\n' },
+            { palabras: ["multiplicación"], codigo: 'resultado = 6 * 7\n' },
+            { palabras: ["división entera"], codigo: 'resultado = 9 // 2\n' },
+            { palabras: ["división"], codigo: 'resultado = 8 / 2\n' },
+            { palabras: ["módulo"], codigo: 'resultado = 10 % 3\n' },
+            { palabras: ["potencia"], codigo: 'resultado = 2 ** 3\n' },
+            { palabras: ["convertir a entero"], codigo: 'numero = int("42")\n' },
+            { palabras: ["convertir a flotante"], codigo: 'numero = float("3.14")\n' },
+            { palabras: ["convertir a cadena"], codigo: 'texto = str(100)\n' },
+        ];
+
+        const comando = comandos.find(c => c.palabras.some(p => transcript.includes(p)));
+
+        if (comando) {
+            editor.insert(comando.codigo);
+        } else if (transcript.includes("ejecutar")) {
+            main();
+        } else if (transcript.includes("abrir")) {
+            document.querySelector('input').click();
+        } else if (transcript.includes("guardar")) {
+            saveCode();
+        } else if (transcript.includes("descarga")) {
+            downloadCode();
+        } else if (transcript.includes("tema")) {
+            Color();
+        } else if (transcript.includes("borrar")) {
+            const range = editor.getSelectionRange();
+            if (!range.isEmpty()) {
+                editor.session.remove(range);
             } else {
-                editor.insert('# Comando no reconocido: ' + transcript + '\n');
+                editor.insert('# No hay texto seleccionado para borrar\n');
             }
-            
-        };
+        }else if (transcript.includes("enter")) {
+            editor.insert('\n');
+        }else if (/(\d+)\s+tabulaciones?/.test(transcript)) {
+            const match = transcript.match(/(\d+)\s+tabs?/);
+            const count = parseInt(match[1]);
+            const tabs = '\t'.repeat(count); // o usa '    '.repeat(count) si prefieres espacios
+            editor.insert(tabs);
+        }else if (/(\d+)\s+espacios?/.test(transcript)) {
+            const match = transcript.match(/(\d+)\s+espacios?/);
+            const count = parseInt(match[1]);
+            const espacios = ' '.repeat(count);
+            editor.insert(espacios);
+        }else {
+            alert('Comando no reconocido: ' + transcript);
+        }
+    };
 
-        codeRecognition.onerror = function (event) {
-            console.error("Error: ", event.error);
-        };
+    recog.onerror = (event) => {
+        console.error("❌ Error (modo código): ", event.error);
+    };
 
-        codeRecognition.onend = function () {
-            console.log("Modo código desactivado...");
-        };
+    recog.onend = () => {
+        isCodeListening = false;
+        codeStatus.style.display = 'none';
+        console.log("🧠 Modo código desactivado.");
+    };
 
-        codeRecognition.start();
-    } else {
-        alert('La Web Speech API no está soportada en este navegador.');
+    return recog;
+}
+
+function startCodeRecognition() {
+    if (!isCodeListening) {
+        codeRecognition = initializeCodeRecognition();
+        if (codeRecognition) codeRecognition.start();
     }
 }
 
-function stopCodeVoiceRecognition() {
-    if (codeRecognition) {
+function stopCodeRecognition() {
+    if (codeRecognition && isCodeListening) {
         codeRecognition.stop();
     }
 }
-startVoiceRecognition();
-startCodeVoiceRecognition();
 document.addEventListener('keydown', (event) => {
-    if (event.shiftKey && event.ctrlKey) {
-        if (recognition && recognition.state !== "recording") {
-            recognition.start();
-        }
+    keysPressed[event.key] = true;
+
+    if (keysPressed['Control'] && keysPressed['Shift'] && !isListening) {
+      startRecognition();
     }
-    if (event.shiftKey && event.altKey) {
-        if (codeRecognition && codeRecognition.state !== "recording") {
-            codeRecognition.start();
-        }
+    if (event.shiftKey && event.altKey && !isCodeListening) {
+        startCodeRecognition();
     }
 });
 document.addEventListener('keyup', (event) => {
-    if (event.shiftKey && event.ctrlKey) {
-        stopVoiceRecognition();
+    keysPressed[event.key] = false;
+
+    if (!event.ctrlKey || !event.shiftKey) {
+      stopRecognition();
     }
-    if (event.shiftKey && event.altKey) {
-        stopCodeVoiceRecognition();
+    if (!event.shiftKey || !event.altKey) {
+        stopCodeRecognition();
     }
 });
 var editor = ace.edit("editor");
