@@ -10,7 +10,6 @@ function builtinRead(x) {
 }
 
 //Codigo proporcionado por skulpt pero modificado para el uso de Python 3,
-// el uso de ace-builds y que se imprima el tiempo de ejecucion.
 function run() {
     var t0 = (new Date()).getTime()
     var prog = editor.getValue();
@@ -88,12 +87,6 @@ function downloadCode() {
         hiddenElement.click();
     }
 }
-
-function shareCode() {
-    var link = window.location.href.split('?')[0] + "?code=" + encodeURIComponent(editor.getValue());
-    window.prompt("Copy link to clipboard: Ctrl+C, Enter", link);
-}
-
 //Codigo para cambiar el color de oscuro a claro
 function Color() {
     const html = document.documentElement;
@@ -175,7 +168,6 @@ function stopVoiceRecognition() {
         recognition.stop();
     }
 }
-//Literal
 //Interprete
 let codeRecognition;
 
@@ -240,6 +232,16 @@ function startCodeVoiceRecognition() {
                 editor.insert('numero = float("3.14")\n');
             } else if (transcript.includes("convertir a cadena")) {
                 editor.insert('texto = str(100)\n');
+            } else if (transcript.includes("ejecutar")) {
+                main();
+            } else if (transcript.includes("abrir")) {
+                document.querySelector('input').click();
+            } else if (transcript.includes("guardar")) {
+                saveCode();
+            } else if (transcript.includes("descarga")) {
+                downloadCode();
+            } else if (transcript.includes("tema")) {
+                Color();
             } else {
                 editor.insert('# Comando no reconocido: ' + transcript + '\n');
             }
@@ -265,75 +267,25 @@ function stopCodeVoiceRecognition() {
         codeRecognition.stop();
     }
 }
-//Interprete
-function kbShortcuts() {
-    window.alert("Run : Ctrl+Enter\nOpen : Ctrl+Shift+O\nConsole : Ctrl+Shift+E\nSave : Ctrl+Shift+S\nDownload : Ctrl+Shift+D\nShare : Ctrl+Shift+A\nKeyboard : Ctrl+Shift+K\nSettings : Ctrl+,")
-}
-
-function aceSettings() {
-    editor.execCommand("showSettingsMenu")
-}
-
-function resPanel() {
-    var x = document.getElementById("myTopnav");
-    if (x.className === "topnav") {
-        x.className += " responsive";
-    } else {
-        x.className = "topnav";
-    }
-}
 startVoiceRecognition();
 startCodeVoiceRecognition();
 document.addEventListener('keydown', (event) => {
-    if (event.shiftKey && event.key == "O") {
+    if (event.shiftKey && event.ctrlKey) {
         if (recognition && recognition.state !== "recording") {
             recognition.start();
         }
     }
-    if (event.shiftKey && event.key == "U") {
+    if (event.shiftKey && event.altKey) {
         if (codeRecognition && codeRecognition.state !== "recording") {
             codeRecognition.start();
         }
     }
-    if (event.ctrlKey && event.key == "Enter") {
-        event.preventDefault();
-        main();
-    }
-
-    if (event.ctrlKey && event.shiftKey && event.key == "O") {
-    }
-
-    if (event.ctrlKey && event.shiftKey && event.key == "E") {
-        event.preventDefault();
-        toggleConsole();
-    }
-
-    if (event.ctrlKey && event.shiftKey && event.key == "S") {
-        event.preventDefault();
-        saveCode();
-    }
-
-    if (event.ctrlKey && event.shiftKey && event.key == "D") {
-        event.preventDefault();
-        downloadCode();
-    }
-
-    if (event.ctrlKey && event.shiftKey && event.key == "A") {
-        event.preventDefault();
-        shareCode();
-    }
-
-    if (event.ctrlKey && event.shiftKey && event.key == "K") {
-        event.preventDefault();
-        kbShortcuts();
-    }
-
 });
 document.addEventListener('keyup', (event) => {
-    if (event.shiftKey && event.key == "O") {
+    if (event.shiftKey && event.ctrlKey) {
         stopVoiceRecognition();
     }
-    if (event.shiftKey && event.key == "U") {
+    if (event.shiftKey && event.altKey) {
         stopCodeVoiceRecognition();
     }
 });
@@ -353,28 +305,3 @@ editor.setOptions({
     enableLiveAutocompletion: true,
     autoScrollEditorIntoView: true,
 });
-
-var savedCode = localStorage['saveKey'] || 'defaultValue';
-
-if (savedCode != "defaultValue") {
-    editor.setValue(savedCode);
-}
-
-var params = new Proxy(new URLSearchParams(window.location.search), {
-    get: (searchParams, prop) => searchParams.get(prop),
-});
-
-if (params.code != null) {
-    editor.setValue(params.code);
-};
-
-var input = document.querySelector('input')
-input.addEventListener('change', () => {
-    openFile();
-});
-
-window.addEventListener('beforeunload', function (event) {
-    event.preventDefault();
-    event.returnValue = '';
-});
-
