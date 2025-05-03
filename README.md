@@ -19,10 +19,10 @@ Este proyecto es una interfaz web que permite escribir, ejecutar y guardar códi
 - [Ace Editor](https://ace.c9.io/)
 - [Skulpt](https://skulpt.org/) (intérprete de Python en el navegador)
 
-##¿Cómo usarlo?
+## ¿Cómo usarlo?
 
 1. Abre `index.html` en tu navegador web.
 2. Escribe código Python en el editor.
 3. Haz clic en **"Ejecutar"** para ver la salida en el área de resultados.
 4. Puedes **subir**, **guardar** o **descargar** archivos de código según sea necesario.
-5. Usa la pestaña de **Guía de Comandos** para ayudarte con estructuras básicas de Python.
+5. Usa la pestaña de **Comandos** para ayudarte a usar el interprete de voz.
