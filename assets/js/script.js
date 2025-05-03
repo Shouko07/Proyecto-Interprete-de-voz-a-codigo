@@ -264,8 +264,97 @@ function initializeCodeRecognition() {
             const count = parseInt(match[1]);
             const espacios = ' '.repeat(count);
             editor.insert(espacios);
-        }else {
-            alert('Comando no reconocido: ' + transcript);
+        }else if (transcript.startsWith("comentario")) {
+            let contenido = transcript.replace("comentario", "").trim();
+        
+            // Eliminar signos de puntuación comunes al inicio/final
+            contenido = contenido.replace(/^[.,;:'"!?¿¡()\[\]{}<>]+/, ''); // al inicio
+            contenido = contenido.replace(/[.,;:'"!?¿¡()\[\]{}<>]+$/, ''); // al final
+        
+            if (contenido.length > 0) {
+                editor.insert('# ' + contenido + '\n');
+            } else {
+                editor.insert('# Comentario vacío\n');
+            }
+        }else if (transcript.includes("tabulación")) {
+            editor.insert("\t");
+        }else if (transcript.startsWith("variable")) {
+            let contenido = transcript.replace("variable", "").trim();
+        
+            // 1. Eliminar puntuación (como punto final)
+            contenido = contenido.replace(/[.,;:'"!?¿¡()\[\]{}<>]/g, '');
+        
+            // 2. Eliminar acentos
+            contenido = contenido.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+            // 3. Convertir a snake_case (espacios a guiones bajos)
+            contenido = contenido.toLowerCase().replace(/\s+/g, "_");
+        
+            // 4. Insertar como variable válida
+            if (contenido.length > 0) {
+                editor.insert(contenido);
+            } else {
+                editor.insert('# Nombre de variable no detectado\n');
+            }
+        }else if (transcript.includes("copiar")) {
+            const selectedText = editor.getSelectedText();
+            if (selectedText) {
+                navigator.clipboard.writeText(selectedText)
+                    .then(() => alert("Texto copiado al portapapeles"))
+                    .catch(err => alert("Error al copiar: " + err));
+            } else {
+                alert("No hay texto seleccionado para copiar");
+            }
+        
+        } else if (transcript.includes("cortar")) {
+            const selectedText = editor.getSelectedText();
+            if (selectedText) {
+                navigator.clipboard.writeText(selectedText)
+                    .then(() => {
+                        editor.session.replace(editor.getSelectionRange(), ""); // Borra el texto
+                        alert("Texto cortado al portapapeles");
+                    })
+                    .catch(err => alert("Error al cortar: " + err));
+            } else {
+                alert("No hay texto seleccionado para cortar");
+            }
+        
+        } else if (transcript.includes("pegar")) {
+            navigator.clipboard.readText()
+                .then(text => {
+                    editor.insert(text);
+                })
+                .catch(err => alert("Error al pegar: " + err));
+        }
+        else {
+            // Diccionario de símbolos por voz
+            const simbolos = {
+                "igual": "=",
+                "más": "+",
+                "menos": "-",
+                "por": "*",
+                "entre": "/",
+                "doble puntos": ":",
+                "punto y coma": ";",
+                "coma": ",",
+                "punto": ".",
+                "comilla doble": '"',
+                "comilla simple": "'",
+                "mayor que": ">",
+                "menor que": "<",
+                "interrogación": "?",
+                "admiración": "!",
+                "abre paréntesis": "(",
+                "cierra paréntesis": ")"
+            };
+        
+            // Buscar coincidencia exacta
+            const simbolo = Object.keys(simbolos).find(key => transcript.includes(key));
+            if (simbolo) {
+                editor.insert(simbolos[simbolo]);
+            } else {
+                alert('Comando no reconocido: ' + transcript);
+            }
         }
     };
 
