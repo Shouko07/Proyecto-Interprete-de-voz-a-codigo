@@ -76,6 +76,15 @@ function downloadCode() {
         hiddenElement.click();
     }
 }
+function mostrarComandos() {
+    alert(`¡Bienvenido! Aquí están los comandos disponibles:
+  
+  - Ctrl + Shift: Activar reconocimiento de voz para dictado de texto.
+  - Shift + Alt: Activar reconocimiento de comandos.
+  
+  ℹ️ Para más información sobre los comandos por voz, consulta la lista en el pie de página.`);
+  }
+  
 //Codigo para cambiar el color de oscuro a claro
 function Color() {
     const html = document.documentElement;
@@ -208,14 +217,14 @@ function initializeCodeRecognition() {
         // Instrucciones por voz mapeadas a código
         const comandos = [
             { palabras: ["imprime"], codigo: 'print("Hola Mundo")\n' },
-            { palabras: ["ciclo for"], codigo: 'for i in range(5):\n    print(i)\n' },
-            { palabras: ["ciclo while"], codigo: 'while condicion:\n    print("Dentro del while")\n' },
-            { palabras: ["condicional if else"], codigo: 'if condicion:\n    print("Verdadero")\nelse:\n    print("Falso")\n' },
-            { palabras: ["condicional if"], codigo: 'if condicion:\n    print("Condición verdadera")\n' },
-            { palabras: ["función"], codigo: 'def mi_funcion():\n    print("Función")\n' },
+            { palabras: ["ciclo for"], codigo: 'for i in range(5):\n    ' },
+            { palabras: ["ciclo while"], codigo: 'while condicion:\n    ' },
+            { palabras: ["condicional if else"], codigo: 'if condicion:\n    nelse:\n ' },
+            { palabras: ["condicional if"], codigo: 'if condicion:\n ' },
+            { palabras: ["función"], codigo: 'def mi_funcion():\n ' },
             { palabras: ["lista"], codigo: 'mi_lista = [1, 2, 3, 4, 5]\n' },
             { palabras: ["tupla"], codigo: 'mi_tupla = (1, 2, 3, 4, 5)\n' },
-            { palabras: ["clase"], codigo: 'class MiClase:\n    def __init__(self, atributo):\n        self.atributo = atributo\n' },
+            { palabras: ["clase"], codigo: 'class MiClase:\n' },
             { palabras: ["objeto"], codigo: 'objeto = MiClase("Valor")\n' },
             { palabras: ["importa"], codigo: 'import numpy as np\n' },
             { palabras: ["entrada"], codigo: 'nombre = input("Ingrese su nombre: ")\n' },
@@ -333,7 +342,7 @@ function initializeCodeRecognition() {
                 "más": "+",
                 "menos": "-",
                 "por": "*",
-                "entre": "/",
+                "diagonal": "/",
                 "doble puntos": ":",
                 "punto y coma": ";",
                 "coma": ",",
@@ -344,8 +353,7 @@ function initializeCodeRecognition() {
                 "menor que": "<",
                 "interrogación": "?",
                 "admiración": "!",
-                "abre paréntesis": "(",
-                "cierra paréntesis": ")"
+                "paréntesis": "("            
             };
         
             // Buscar coincidencia exacta
