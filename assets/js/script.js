@@ -376,7 +376,16 @@ function initializeCodeRecognition() {
             } else {
                 alert("Número no reconocido: " + palabraNumero);
             }
-        }        
+        }else if (transcript.startsWith("número")) {
+            let valor = transcript.replace("número", "").trim().toLowerCase();
+        
+            if (valor === "cero") {
+                editor.insert("0");
+            } else {
+                editor.insert(valor); // Ya es "5", "13", etc.
+            }
+        }
+        
         else {
             // Diccionario de símbolos por voz
             const simbolos = {
