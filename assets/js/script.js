@@ -386,6 +386,7 @@ function initializeCodeRecognition() {
             }
         }
         
+        
         else {
             // Diccionario de símbolos por voz
             const simbolos = {
