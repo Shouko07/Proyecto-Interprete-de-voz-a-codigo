@@ -334,7 +334,49 @@ function initializeCodeRecognition() {
                     editor.insert(text);
                 })
                 .catch(err => alert("Error al pegar: " + err));
-        }
+        }else if (transcript.startsWith("número")) {
+            let palabraNumero = transcript.replace("número", "").trim().toLowerCase();
+        
+            // Diccionario simple de números comunes
+            const mapaNumeros = {
+                "cero": 0,
+                "uno": 1,
+                "dos": 2,
+                "tres": 3,
+                "cuatro": 4,
+                "cinco": 5,
+                "seis": 6,
+                "siete": 7,
+                "ocho": 8,
+                "nueve": 9,
+                "diez": 10,
+                "once": 11,
+                "doce": 12,
+                "trece": 13,
+                "catorce": 14,
+                "quince": 15,
+                "dieciséis": 16,
+                "diecisiete": 17,
+                "dieciocho": 18,
+                "diecinueve": 19,
+                "veinte": 20,
+                "treinta": 30,
+                "cuarenta": 40,
+                "cincuenta": 50,
+                "sesenta": 60,
+                "setenta": 70,
+                "ochenta": 80,
+                "noventa": 90,
+                "cien": 100,
+                "mil": 1000
+            };
+        
+            if (mapaNumeros[palabraNumero] !== undefined) {
+                editor.insert(mapaNumeros[palabraNumero].toString());
+            } else {
+                alert("Número no reconocido: " + palabraNumero);
+            }
+        }        
         else {
             // Diccionario de símbolos por voz
             const simbolos = {
