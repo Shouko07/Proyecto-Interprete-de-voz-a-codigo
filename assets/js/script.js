@@ -337,12 +337,34 @@ function initializeCodeRecognition() {
         }else if (transcript.startsWith("número")) {
             let valor = transcript.replace("número", "").trim().toLowerCase();
         
-            if (valor === "cero") {
-                editor.insert("0");
-            } else {
-                editor.insert(valor); // Ya es "5", "13", etc.
+            // Diccionario para palabras comunes
+            const mapaNumeros = {
+                "cero": 0,
+                "uno": 1,
+                "dos": 2,
+                "tres": 3,
+                "cuatro": 4,
+                "cinco": 5,
+                "seis": 6,
+                "siete": 7,
+                "ocho": 8,
+                "nueve": 9,
+                "diez": 10
+            };
+        
+            // Si viene como palabra (ej. "cuatro")
+            if (mapaNumeros[valor] !== undefined) {
+                editor.insert(mapaNumeros[valor].toString());
             }
-        }
+            // Si ya es un número reconocido (ej. "4", "23")
+            else if (!isNaN(Number(valor))) {
+                editor.insert(Number(valor).toString());
+            }
+            // Si no se reconoce, se avisa
+            else {
+                alert("No se reconoció un número válido: " + valor);
+            }
+        }        
         else {
             // Diccionario de símbolos por voz
             const simbolos = {
