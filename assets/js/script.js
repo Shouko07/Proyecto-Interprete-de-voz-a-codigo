@@ -337,7 +337,10 @@ function initializeCodeRecognition() {
         }else if (transcript.startsWith("número")) {
             let valor = transcript.replace("número", "").trim().toLowerCase();
         
-            // Diccionario para palabras comunes
+            // Normalizar tildes (por si dice "diez", "cuatro", "tres", etc.)
+            valor = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina acentos
+        
+            // Diccionario simple
             const mapaNumeros = {
                 "cero": 0,
                 "uno": 1,
@@ -352,19 +355,19 @@ function initializeCodeRecognition() {
                 "diez": 10
             };
         
-            // Si viene como palabra (ej. "cuatro")
-            if (mapaNumeros[valor] !== undefined) {
+            // Intenta encontrarlo como palabra
+            if (mapaNumeros.hasOwnProperty(valor)) {
                 editor.insert(mapaNumeros[valor].toString());
             }
-            // Si ya es un número reconocido (ej. "4", "23")
+            // O si viene como número directamente (e.g. "11", "23")
             else if (!isNaN(Number(valor))) {
                 editor.insert(Number(valor).toString());
             }
-            // Si no se reconoce, se avisa
             else {
                 alert("No se reconoció un número válido: " + valor);
             }
-        }        
+        }
+        
         else {
             // Diccionario de símbolos por voz
             const simbolos = {
