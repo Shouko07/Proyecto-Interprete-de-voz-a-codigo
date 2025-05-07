@@ -337,30 +337,7 @@ function initializeCodeRecognition() {
         }else if (transcript.startsWith("número")) {
             let valor = transcript.replace("número", "").trim().toLowerCase();
         
-            // Normalizar tildes (por si dice "diez", "cuatro", "tres", etc.)
-            valor = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina acentos
-        
-            // Diccionario simple
-            const mapaNumeros = {
-                "cero": 0,
-                "uno": 1,
-                "dos": 2,
-                "tres": 3,
-                "cuatro": 4,
-                "cinco": 5,
-                "seis": 6,
-                "siete": 7,
-                "ocho": 8,
-                "nueve": 9,
-                "diez": 10
-            };
-        
-            // Intenta encontrarlo como palabra
-            if (mapaNumeros.hasOwnProperty(valor)) {
-                editor.insert(mapaNumeros[valor].toString());
-            }
-            // O si viene como número directamente (e.g. "11", "23")
-            else if (!isNaN(Number(valor))) {
+            if (!isNaN(Number(valor))) {
                 editor.insert(Number(valor).toString());
             }
             else {
