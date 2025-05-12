@@ -259,7 +259,7 @@ function initializeCodeRecognition() {
             if (!range.isEmpty()) {
                 editor.session.remove(range);
             } else {
-                editor.insert('Analisis semantico: # No hay texto seleccionado para borrar\n');
+                editor.insert('# No hay texto seleccionado para borrar\n');
             }
         }else if (transcript.includes("enter")) {
             editor.insert('\n');
@@ -283,7 +283,7 @@ function initializeCodeRecognition() {
             if (contenido.length > 0) {
                 editor.insert('# ' + contenido + '\n');
             } else {
-                editor.insert('Analisis semantico: # Comentario vacío\n');
+                editor.insert('# Comentario vacío\n');
             }
         }else if (transcript.includes("tabulación")) {
             editor.insert("\t");
@@ -303,7 +303,7 @@ function initializeCodeRecognition() {
             if (contenido.length > 0) {
                 editor.insert(contenido);
             } else {
-                editor.insert('Analisis semantico: # Nombre de variable no detectado\n');
+                editor.insert('# Nombre de variable no detectado\n');
             }
         }else if (transcript.includes("copiar")) {
             const selectedText = editor.getSelectedText();
@@ -312,7 +312,7 @@ function initializeCodeRecognition() {
                     .then(() => alert("Texto copiado al portapapeles"))
                     .catch(err => alert("Error al copiar: " + err));
             } else {
-                alert("Analisis semantico: No hay texto seleccionado para copiar");
+                alert("No hay texto seleccionado para copiar");
             }
         
         } else if (transcript.includes("cortar")) {
@@ -325,7 +325,7 @@ function initializeCodeRecognition() {
                     })
                     .catch(err => alert("Error al cortar: " + err));
             } else {
-                alert("Analisis semantico: No hay texto seleccionado para cortar");
+                alert("No hay texto seleccionado para cortar");
             }
         
         } else if (transcript.includes("pegar")) {
@@ -364,7 +364,7 @@ function initializeCodeRecognition() {
                 editor.insert(Number(valor).toString());
             }
             else {
-                alert("Analisis semantico: No se reconoció un número válido: " + valor);
+                alert("No se reconoció un número válido: " + valor);
             }
         }
         
@@ -394,7 +394,7 @@ function initializeCodeRecognition() {
             if (simbolo) {
                 editor.insert(simbolos[simbolo]);
             } else {
-                alert('Analisis sintactico: Comando no reconocido: ' + transcript);
+                alert('Comando no reconocido: ' + transcript);
             }
         }
     };
