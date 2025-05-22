@@ -76,6 +76,7 @@ function downloadCode() {
         hiddenElement.click();
     }
 }
+//Funcion para mostrar los comandos disponibles.
 function mostrarComandos() {
     alert(`¡Bienvenido! Aquí están los comandos disponibles:
   
@@ -214,7 +215,7 @@ function initializeCodeRecognition() {
         const editor = ace.edit("editor");
         console.log("Comando reconocido: ", transcript);
 
-        // Instrucciones por voz mapeadas a código
+        // Instrucciones por voz
         const comandos = [
             { palabras: ["imprime"], codigo: 'print("Hola Mundo")\n' },
             { palabras: ["ciclo for"], codigo: 'for i in range(5):\n    ' },
@@ -266,7 +267,7 @@ function initializeCodeRecognition() {
         }else if (/(\d+)\s+tabulaciones?/.test(transcript)) {
             const match = transcript.match(/(\d+)\s+tabs?/);
             const count = parseInt(match[1]);
-            const tabs = '\t'.repeat(count); // o usa '    '.repeat(count) si prefieres espacios
+            const tabs = '\t'.repeat(count);
             editor.insert(tabs);
         }else if (/(\d+)\s+espacios?/.test(transcript)) {
             const match = transcript.match(/(\d+)\s+espacios?/);
@@ -290,16 +291,16 @@ function initializeCodeRecognition() {
         }else if (transcript.startsWith("variable")) {
             let contenido = transcript.replace("variable", "").trim();
         
-            // 1. Eliminar puntuación (como punto final)
+            // Eliminar puntuación (como punto final)
             contenido = contenido.replace(/[.,;:'"!?¿¡()\[\]{}<>]/g, '');
         
-            // 2. Eliminar acentos
+            // Eliminar acentos
             contenido = contenido.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         
-            // 3. Convertir a snake_case (espacios a guiones bajos)
+            //Convertir a snake_case (espacios a guiones bajos)
             contenido = contenido.toLowerCase().replace(/\s+/g, "_");
         
-            // 4. Insertar como variable válida
+            // Insertar como variable válida
             if (contenido.length > 0) {
                 editor.insert(contenido);
             } else {
@@ -334,10 +335,14 @@ function initializeCodeRecognition() {
                     editor.insert(text);
                 })
                 .catch(err => alert("Error al pegar: " + err));
-        }else if (transcript.startsWith("número")) {
+        }else if (transcript.includes("deshacer")) {
+                editor.undo();
+                alert("Deshacer realizado");
+            }
+            else if (transcript.startsWith("número")) {
             let valor = transcript.replace("número", "").trim().toLowerCase();
         
-            // Normalizar tildes (por si dice "diez", "cuatro", "tres", etc.)
+            // Normalizar tildes
             valor = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina acentos
         
             // Diccionario simple
@@ -359,7 +364,6 @@ function initializeCodeRecognition() {
             if (mapaNumeros.hasOwnProperty(valor)) {
                 editor.insert(mapaNumeros[valor].toString());
             }
-            // O si viene como número directamente (e.g. "11", "23")
             else if (!isNaN(Number(valor))) {
                 editor.insert(Number(valor).toString());
             }
